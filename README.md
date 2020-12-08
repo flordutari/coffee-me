@@ -4,7 +4,7 @@
 
 ## Description
 Is a corwdfunding platform to accept support from people that likes what you do.
-
+Built in Flask(Python), SQL, JS, HTML, CSS
 ## Utilities
 You'll be able to:
 - Create an account
