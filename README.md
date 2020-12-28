@@ -29,14 +29,15 @@ POST | /buy-coffee | buy a coffee
 ```
 User table
 - id: number
-- username: text
+- name: text
+- surname: text
 - password: text
 - coffees: number
-- project: id
 ```
 ```
 Project table
 - id: number
+- user_id: number
 - title: text
 - description: text
 - image: text
@@ -44,8 +45,9 @@ Project table
 ```
 ```
 Transaction table
+- id: number
 - user_id: number
-- creator: number
+- project_id: number
 - created_at: date
 - coffees: number
 ```
