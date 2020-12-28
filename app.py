@@ -1,5 +1,5 @@
-from os import os, environ
-import pymysql
+import os
+from flaskext.mysql import MySQL
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
@@ -29,18 +29,50 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure database
-db = pymysql.connect(
-    environ.get("DB_HOSTNAME"),
-    environ.get("DB_USERNAME"),
-    environ.get("DB_PASSWORD"),
-    environ.get("DB_ID")
-)
+app.config["MYSQL_HOST"] = os.environ.get("DB_HOSTNAME")
+app.config["MYSQL_USER"] = os.environ.get("DB_USERNAME")
+app.config["MYSQL_PASSWORD"] = os.environ.get("DB_PASSWORD")
+app.config["MYSQL_DB"] = os.environ.get("DB_ID")
+
+mysql = MySQL(app)
+conn = mysql.connect()
+cursor =conn.cursor()
 
 @app.route("/")
-@login_required
 def index():
-    user_id = session["user_id"]
     return render_template("index.html")
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    # User reached route via POST
+    if request.method == "POST":
+
+        # Ensure user email was submitted
+        if not request.form.get("email"):
+            return apology("must provide an email", 403)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 403)
+
+        # Query database for email
+        rows = cursor.execute("SELECT * FROM users WHERE email = :email",
+                        email = request.form.get("email"))
+
+        # Ensure that email doesn't exist
+        if len(rows) > 0:
+            return apology("The email provided already exists! choose another please", 403)
+
+        # Query database to create user
+        cursor.execute("INSERT INTO users (email, hash) VALUES (:email, :hash)",
+                        email = request.form.get("email"), hash=generate_password_hash(request.form.get("password")))
+
+        # Redirect user to login
+        return redirect("/login")
+
+    # User reached route via GET
+    else:
+        return render_template("signup.html")
 
 def errorhandler(e):
     """Handle error"""
