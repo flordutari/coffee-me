@@ -1,5 +1,5 @@
 import os
-from flaskext.mysql import MySQL
+import pymysql
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
@@ -29,14 +29,19 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure database
-app.config["MYSQL_HOST"] = os.environ.get("DB_HOSTNAME")
-app.config["MYSQL_USER"] = os.environ.get("DB_USERNAME")
-app.config["MYSQL_PASSWORD"] = os.environ.get("DB_PASSWORD")
-app.config["MYSQL_DB"] = os.environ.get("DB_ID")
+app.config["MYSQL_DATABASE_HOST"] = os.environ.get("DB_HOSTNAME")
+app.config["MYSQL_DATABASE_USER"] = os.environ.get("DB_USERNAME")
+app.config["MYSQL_DATABASE_PASSWORD"] = os.environ.get("DB_PASSWORD")
+app.config["MYSQL_DATABASE_DB"] = os.environ.get("DB_ID")
+app.config['MYSQL_DATABASE_CURSORCLASS'] = 'DictCursor'
 
-mysql = MySQL(app)
-conn = mysql.connect()
-cursor =conn.cursor()
+conn = pymysql.connect(
+    host= os.environ.get("DB_HOSTNAME"),
+    port = 3306,
+    user = os.environ.get("DB_USERNAME"),
+    password = os.environ.get("DB_PASSWORD"),
+    db = os.environ.get("DB_ID"),
+)
 
 @app.route("/")
 def index():
@@ -59,16 +64,20 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for email
-        rows = cursor.execute("SELECT * FROM users WHERE email = :email",
-                          email=request.form.get("email"))
+        email = request.form.get("email")
+        db = conn.cursor(pymysql.cursors.DictCursor)
+        db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
+                    (email))
+        rows = db.fetchall()
 
         # Ensure email exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
+            return apology("invalid email and/or password", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
+        conn.commit()
         # Redirect user to home page
         return redirect("/")
 
@@ -90,17 +99,22 @@ def signup():
             return apology("must provide password", 403)
 
         # Query database for email
-        rows = cursor.execute("SELECT * FROM users WHERE email = :email",
-                        email = request.form.get("email"))
+        email = request.form.get("email")
+        db = conn.cursor(pymysql.cursors.DictCursor)
+        db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
+                    (email))
+        rows = db.fetchall()
 
         # Ensure that email doesn't exist
         if len(rows) > 0:
             return apology("The email provided already exists! choose another please", 403)
 
+        hash = generate_password_hash(request.form.get("password"))
         # Query database to create user
-        cursor.execute("INSERT INTO users (email, hash) VALUES (:email, :hash)",
-                        email = request.form.get("email"), hash=generate_password_hash(request.form.get("password")))
+        db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
+                    (email, hash))
 
+        conn.commit()
         # Redirect user to login
         return redirect("/login")
 
