@@ -80,6 +80,14 @@ def login():
     else:
         return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to index
+    return redirect("/")
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     # User reached route via POST
