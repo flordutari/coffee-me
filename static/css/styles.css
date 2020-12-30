@@ -41,6 +41,18 @@ a:hover {
     font-size: 1.1rem;
 }
 
+.text-lg {
+    font-size: 1.5rem;
+}
+
+.text-md {
+    font-size: 1.25rem;
+}
+
+.text-sm {
+    font-size: .9rem;
+}
+
 /*--- NAVBAR ---*/
 .navbar img {
     width: 2rem;
