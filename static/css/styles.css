@@ -29,9 +29,11 @@ a:hover {
 }
 
 .COF-outline {
-    background-color: #FFFFFF;
+    background-color: #FFF;
+    color: #000;
     padding-right: 1rem;
     padding-left: 1rem;
+    line-height: 1rem;
 }
 
 .btn {
@@ -43,6 +45,10 @@ a:hover {
 .navbar img {
     width: 2rem;
     margin-right: .5rem;
+}
+
+.navbar .lnr {
+    vertical-align: text-bottom;
 }
 
 /*--- FOOTER ---*/
