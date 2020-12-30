@@ -1,5 +1,14 @@
 body {
     font-family: lato, sans-serif;
+    font-size: 1.1rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
 }
 
 /*--- GENERAL ---*/
@@ -9,11 +18,38 @@ body {
 
 .COF-primary {
     background-color: #CF4327;
+    color: #FFF;
+}
+
+.COF-black {
+    background-color: #000;
+    color: #FFF;
+    padding-right: 2rem;
+    padding-left: 2rem;
+}
+
+.COF-outline {
+    background-color: #FFFFFF;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.btn {
+    margin-left: .5rem;
+    font-size: 1.1rem;
+}
+
+/*--- NAVBAR ---*/
+.navbar img {
+    width: 2rem;
+    margin-right: .5rem;
 }
 
 /*--- FOOTER ---*/
 .footer {
     position: absolute;
     bottom: 0;
-    width: 100%
+    width: 100%;
+    height: 3rem;
+    line-height: 2rem;
 }
