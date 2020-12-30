@@ -1,0 +1,19 @@
+body {
+    font-family: lato, sans-serif;
+}
+
+/*--- GENERAL ---*/
+.COF-text-primary {
+    color: #CF4327;
+}
+
+.COF-primary {
+    background-color: #CF4327;
+}
+
+/*--- FOOTER ---*/
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%
+}
