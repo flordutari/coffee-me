@@ -29,18 +29,13 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure database
-app.config["MYSQL_DATABASE_HOST"] = os.environ.get("DB_HOSTNAME")
-app.config["MYSQL_DATABASE_USER"] = os.environ.get("DB_USERNAME")
-app.config["MYSQL_DATABASE_PASSWORD"] = os.environ.get("DB_PASSWORD")
-app.config["MYSQL_DATABASE_DB"] = os.environ.get("DB_ID")
-app.config['MYSQL_DATABASE_CURSORCLASS'] = 'DictCursor'
-
 conn = pymysql.connect(
-    host= os.environ.get("DB_HOSTNAME"),
+    host = os.environ.get("DB_HOSTNAME"),
     port = 3306,
     user = os.environ.get("DB_USERNAME"),
     password = os.environ.get("DB_PASSWORD"),
     db = os.environ.get("DB_ID"),
+    cursorclass = pymysql.cursors.DictCursor
 )
 
 @app.route("/")
@@ -65,7 +60,7 @@ def login():
 
         # Query database for email
         email = request.form.get("email")
-        db = conn.cursor(pymysql.cursors.DictCursor)
+        db = conn.cursor()
         db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
                     (email))
         rows = db.fetchall()
@@ -85,6 +80,14 @@ def login():
     else:
         return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to index
+    return redirect("/")
+
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     # User reached route via POST
@@ -100,7 +103,7 @@ def signup():
 
         # Query database for email
         email = request.form.get("email")
-        db = conn.cursor(pymysql.cursors.DictCursor)
+        db = conn.cursor()
         db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
                     (email))
         rows = db.fetchall()

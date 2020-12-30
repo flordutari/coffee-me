@@ -28,28 +28,31 @@ POST | /buy-coffee | buy a coffee
 
 ```
 User table
-- id: number
-- name: text
-- surname: text
-- password: text
-- coffees: number
+- id: int
+- name: varchar
+- surname: varchar
+- password: varchar
+- coffees: int
+- cash: int
 ```
 ```
 Project table
-- id: number
-- user_id: number
-- title: text
-- description: text
-- image: text
-- coffees: number
+- id: int
+- user_id: int
+- title: varchar
+- description: varchar
+- image: varchar
+- coffees: int
 ```
 ```
 Transaction table
-- id: number
-- user_id: number
-- project_id: number
+- id: int
+- user_id: int
+- project_id: int
 - created_at: date
-- coffees: number
+- coffees: int
+- coffee_price: int
+- coffee_price_curr: varchar
 ```
 
 ## Links
