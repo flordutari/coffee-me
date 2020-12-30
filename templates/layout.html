@@ -25,7 +25,7 @@
             </div>
         </nav>
     {% else %}
-        <nav class="navbar navbar-expand-md p-4">
+        <nav class="navbar p-4">
             <a href="/">
                 <img src="/static/images/coffee-logo.png" alt="coffee logo" />
                 <span class="COF-text-primary">Coffee me</span>
@@ -36,10 +36,10 @@
             </div>
         </nav>
     {% endif %}
-    <main class="container p-5">
+    <main class="container">
         {% block main %}{% endblock %}
     </main>
-    <footer class="border-top footer text-center mt-auto py-2">
+    <footer class="border-top footer text-center text-sm mt-auto py-2">
         <span>
             Made with <span class="lnr lnr-heart COF-text-primary"></span> by fd.
         </span>

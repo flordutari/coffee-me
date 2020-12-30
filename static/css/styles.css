@@ -71,3 +71,12 @@ a:hover {
     height: 3rem;
     line-height: 2rem;
 }
+
+/*--- INDEX ---*/
+.article-image {
+    width: 100%;
+}
+
+.index {
+    font-weight: 700;
+}
