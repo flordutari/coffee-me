@@ -3,12 +3,21 @@ body {
     font-size: 1.1rem;
 }
 
-a {
+/*
+lightest-gray: #F8F8F8
+light-gray: #F0F0F0
+gray: #C0C0C0
+dark-gray: #A9A9A9
+darkest-gray: #808080
+almost-black: #505050
+*/
+
+a, a:focus, a:hover {
     text-decoration: none;
 }
 
 a:hover {
-    text-decoration: none;
+    color: #505050;
 }
 
 input:focus {
@@ -27,11 +36,21 @@ input:focus {
     padding-right: 2rem;
 }
 
+.COF-primary:hover, .COF-primary:active {
+    background-color: #9E331E;
+    color: #FFF;
+}
+
 .COF-black {
     background-color: #000;
     color: #FFF;
     padding-left: 2rem;
     padding-right: 2rem;
+}
+
+.COF-black:hover {
+    background-color: #505050;
+    color: #FFF;
 }
 
 .COF-outline {
@@ -123,7 +142,7 @@ input:focus {
 
 /*--- FORMS ---*/
 .COF-input-grey, .COF-input-grey:focus {
-    background-color: #F2F2F2;
+    background-color: #F0F0F0;
     border: none;
     color: #000;
 }

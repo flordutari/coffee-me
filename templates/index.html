@@ -1,23 +1,25 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    <section class="container-fluid index py-5">
-        <div class="row">
-            <div class="col-6 text-lg">
-                <p><span class="COF-text-primary">Coffee me</span> is an easy and friendly way to fund your work.</p>
-                <p>You can accept support, memberships, and build a direct relationship with your fans in really straight forward way.</p>
-                <p>Your supporters will love it.</p>
+    <div class="my-5">
+        <section class="container-fluid index py-5">
+            <div class="row">
+                <div class="col-6 text-lg">
+                    <p><span class="COF-text-primary">Coffee me</span> is an easy and friendly way to fund your work.</p>
+                    <p>You can accept support, memberships, and build a direct relationship with your fans in really straight forward way.</p>
+                    <p>Your supporters will love it.</p>
+                </div>
+                <div class="col">
+                    <img class="article-image" src="../static/images/index-image.png" alt="reading">
+                </div>
             </div>
-            <div class="col">
-                <img class="article-image" src="../static/images/index-image.png" alt="reading">
-            </div>
-        </div>
-    </section>
-
-    <section class="container-fluid text-center text-md my-5">
-        <span class="mx-4">You can also discover new projects</span>
-        <a href="/projects" class="btn COF-primary">Explore projects</a href="/projects">
-    </section>
+        </section>
+    
+        <section class="container-fluid text-center text-md my-5">
+            <span class="mx-4">You can also discover new projects</span>
+            <a href="/projects" class="btn COF-primary">Explore projects</a href="/projects">
+        </section>
+    </div>
 
     <div id="login" class="modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
