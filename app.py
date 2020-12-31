@@ -42,43 +42,36 @@ conn = pymysql.connect(
 def index():
     return render_template("index.html")
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
 def login():
     # Forget any user_id
     session.clear()
 
-    # User reached route via POST
-    if request.method == "POST":
+    # Ensure email was submitted
+    if not request.form.get("email"):
+        return apology("must provide email", 403)
 
-        # Ensure email was submitted
-        if not request.form.get("email"):
-            return apology("must provide email", 403)
+    # Ensure password was submitted
+    elif not request.form.get("password"):
+        return apology("must provide password", 403)
 
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
+    # Query database for email
+    email = request.form.get("email")
+    db = conn.cursor()
+    db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
+                (email))
+    rows = db.fetchall()
 
-        # Query database for email
-        email = request.form.get("email")
-        db = conn.cursor()
-        db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
-                    (email))
-        rows = db.fetchall()
+    # Ensure email exists and password is correct
+    if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+        return apology("invalid email and/or password", 403)
 
-        # Ensure email exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid email and/or password", 403)
+    # Remember which user has logged in
+    session["user_id"] = rows[0]["id"]
 
-        # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
-
-        conn.commit()
-        # Redirect user to home page
-        return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
+    conn.commit()
+    # Redirect user to home page
+    return redirect("/")
 
 @app.route("/logout")
 def logout():
@@ -88,42 +81,39 @@ def logout():
     # Redirect user to index
     return redirect("/")
 
-@app.route("/signup", methods=["GET", "POST"])
+@app.route("/signup", methods=["POST"])
 def signup():
-    # User reached route via POST
-    if request.method == "POST":
+    # Ensure name and lastname were submitted
+    if not request.form.get("name") or not request.form.get("lastname"):
+        return apology("must provide name and lastname", 403)
 
-        # Ensure user email was submitted
-        if not request.form.get("email"):
-            return apology("must provide an email", 403)
+    # Ensure user email was submitted
+    if not request.form.get("email"):
+        return apology("must provide an email", 403)
 
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
+    # Ensure password was submitted
+    elif not request.form.get("password"):
+        return apology("must provide password", 403)
 
-        # Query database for email
-        email = request.form.get("email")
-        db = conn.cursor()
-        db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
-                    (email))
-        rows = db.fetchall()
+    # Query database for email
+    email = request.form.get("email")
+    db = conn.cursor()
+    db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
+                (email))
+    rows = db.fetchall()
 
-        # Ensure that email doesn't exist
-        if len(rows) > 0:
-            return apology("The email provided already exists! choose another please", 403)
+    # Ensure that email doesn't exist
+    if len(rows) > 0:
+        return apology("The email provided already exists! choose another please", 403)
 
-        hash = generate_password_hash(request.form.get("password"))
-        # Query database to create user
-        db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
-                    (email, hash))
+    hash = generate_password_hash(request.form.get("password"))
+    # Query database to create user
+    db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
+                (email, hash))
 
-        conn.commit()
-        # Redirect user to login
-        return redirect("/login")
-
-    # User reached route via GET
-    else:
-        return render_template("signup.html")
+    conn.commit()
+    # Redirect user to login
+    return redirect("/")
 
 def errorhandler(e):
     """Handle error"""
