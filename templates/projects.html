@@ -1,5 +1,9 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    projects
+    {% if session.project_id %}
+        project
+    {% else %}
+        no project
+    {% endif %}
 {% endblock %}

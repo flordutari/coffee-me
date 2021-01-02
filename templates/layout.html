@@ -15,26 +15,26 @@
 </head>
 <body>
     {% if session.user_id %}
-        <nav class="navbar border-bottom">
-            <a href="/">
-                <img src="/static/images/coffee-logo.png" alt="coffee logo" />
-            </a>
-            <div>
-                <a href="/logout" class="btn COF-outline">Logout</a>
-                <span class="lnr lnr-user" />
-            </div>
-        </nav>
+    <nav class="navbar border-bottom">
+        <a href="/">
+            <img src="/static/images/coffee-logo.png" alt="coffee logo" />
+        </a>
+        <div>
+            <a href="/logout" class="btn COF-outline">Logout</a>
+            <span class="lnr lnr-user" />
+        </div>
+    </nav>
     {% else %}
-        <nav class="navbar p-4">
-            <a href="/">
-                <img src="/static/images/coffee-logo.png" alt="coffee logo" />
-                <span class="COF-text-primary">Coffee me</span>
-            </a>
-            <div class="COF-btn-group">
-                <button class="btn COF-outline" data-toggle="modal" data-target="#login">Login</button>
-                <button class="btn COF-black" data-toggle="modal" data-target="#signup">Signup</button>
-            </div>
-        </nav>
+    <nav class="navbar p-4">
+        <a href="/">
+            <img src="/static/images/coffee-logo.png" alt="coffee logo" />
+            <span class="COF-text-primary">Coffee me</span>
+        </a>
+        <div class="COF-btn-group">
+            <button class="btn COF-outline" data-toggle="modal" data-target="#login">Login</button>
+            <button class="btn COF-black" data-toggle="modal" data-target="#signup">Signup</button>
+        </div>
+    </nav>
     {% endif %}
     <main class="container">
         {% block main %}{% endblock %}
@@ -48,5 +48,4 @@
         </span>
     </footer>
 </body>
-<script src="../static/js/loginModal.js"></script>
 </html>
