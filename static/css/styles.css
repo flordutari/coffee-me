@@ -105,15 +105,6 @@ input:focus {
     width: 100%;
 }
 
-/*--- INDEX ---*/
-.article-image {
-    width: 100%;
-}
-
-.index {
-    font-weight: 700;
-}
-
 /*--- MODALS ---*/
 .modal-dialog {
     margin-top: 7rem;
@@ -149,4 +140,13 @@ input:focus {
 
 .COF-form-btn {
     height: 3rem;
+}
+
+/*--- PAGES ---*/
+.article-image {
+    width: 100%;
+}
+
+.my-project {
+    margin: 6rem;
 }
