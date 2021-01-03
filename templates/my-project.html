@@ -4,6 +4,21 @@
 <section class="my-project">
     {% if session.project_id %}
     <h3>My project</h3>
+    <div class="shadow p-3 mb-5 my-5">
+        <section class="container-fluid py-5">
+            <div class="row">
+                    <p>{{ project["title"] }}</p>
+                    <p>You can accept support, memberships, and build a direct relationship with your fans in really straight forward way.</p>
+                    <p>Your supporters will love it.</p>
+                    <img class="article-image" src="{{ image }}" alt="reading">
+            </div>
+        </section>
+    
+        <section class="container-fluid text-center text-md my-5">
+            <span class="mx-4">You can also discover new projects</span>
+            <a href="/projects" class="btn COF-primary">Explore projects</a href="/projects">
+        </section>
+    </div>
     {% else %}
     <h3>Create new project</h3>
     <form action="/my-project" method="POST">
