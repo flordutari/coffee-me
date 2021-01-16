@@ -1,83 +1,81 @@
 {% extends "layout.html" %}
 
 {% block main %}
-<div class="my-5">
-    <section class="container-fluid py-5">
-        <div class="row">
-            <div class="col-6 text-lg">
-                <p><span class="COF-text-primary black">Coffee me</span> is an easy and friendly way to fund your work.</p>
-                <p>You can accept support, memberships, and build a direct relationship with your fans in really straight forward way.</p>
-                <p>Your supporters will love it.</p>
-            </div>
-            <div class="col">
-                <img class="article-image" src="../static/images/index-image.png" alt="reading">
+<div class="container">
+    <div class="row align-items-center my-5">
+        <div class="col-6 text-lg">
+            <h3 class="COF-text-primary black">Coffee me blablalba</h3>
+            <p>It's an easy and friendly way to fund your work.</p>
+            <p>You can accept support, memberships, and build a direct relationship with your fans in really straight forward way.</p>
+            <p>Your supporters will love it.</p>
+        </div>
+        <div class="col">
+            <img class="article-image" src="../static/images/index-image.png" alt="reading">
+        </div>
+        <section class="mx-auto my-5 text-md">
+            <span class="mx-4">You can also discover new projects</span>
+            <a href="/projects" class="btn COF-primary">Explore projects</a href="/projects">
+        </section>
+    
+        <div id="login" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <span type="button" class="close COF-modal-cross lnr lnr-cross m-2 text-md" data-dismiss="modal"></span>
+                    <div class="COF-modal-header">
+                        <h5 class="COF-modal-title text-md">Welcome back!</h5>
+                    </div>
+                    <form action="/login" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input class="COF-input-grey form-control" autocomplete="off" autofocus name="email" placeholder="Email" type="email">
+                            </div>
+                            <div class="form-group">
+                                <input class="COF-input-grey form-control" name="password" placeholder="Password" type="password">
+                            </div>
+                        </div>
+                        <div class="COF-modal-footer">
+                            <button class="btn COF-form-btn COF-primary form-control" type="submit">Login</button>
+                            <p class="text-sm my-2">or
+                                <span class="black" data-dismiss="modal" data-toggle="modal" data-target="#signp">Signup</span>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </section>
-
-    <section class="container-fluid text-center text-md my-5">
-        <span class="mx-4">You can also discover new projects</span>
-        <a href="/projects" class="btn COF-primary">Explore projects</a href="/projects">
-    </section>
-</div>
-
-<div id="login" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <span type="button" class="close COF-modal-cross lnr lnr-cross m-2 text-md" data-dismiss="modal"></span>
-            <div class="COF-modal-header">
-                <h5 class="COF-modal-title text-md">Welcome back!</h5>
+        
+        <div id="signup" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <span type="button" class="close COF-modal-cross lnr lnr-cross m-2 text-md" data-dismiss="modal"></span>
+                    <div class="COF-modal-header">
+                        <h5 class="COF-modal-title text-md">Sign up to get started!</h5>
+                    </div>
+                    <form action="/signup" method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input class="COF-input-grey form-control" autocomplete="off" autofocus name="name" placeholder="Name" type="text">
+                            </div>
+                            <div class="form-group">
+                                <input class="COF-input-grey form-control" autocomplete="off" autofocus name="lastname" placeholder="Last name" type="text">
+                            </div>
+                            <div class="form-group">
+                                <input class="COF-input-grey form-control" autocomplete="off" autofocus name="email" placeholder="Email" type="email">
+                            </div>
+                            <div class="form-group">
+                                <input class="COF-input-grey form-control" name="password" placeholder="Password" type="password">
+                            </div>
+                        </div>
+                        <div class="COF-modal-footer">
+                            <button class="btn COF-form-btn COF-primary form-control" type="submit">Continue</button>
+                            <p class="text-sm my-2">Already have an account? 
+                                <span class="black" data-dismiss="modal" data-toggle="modal" data-target="#login">Login</span>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form action="/login" method="POST">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input class="COF-input-grey form-control" autocomplete="off" autofocus name="email" placeholder="Email" type="email">
-                    </div>
-                    <div class="form-group">
-                        <input class="COF-input-grey form-control" name="password" placeholder="Password" type="password">
-                    </div>
-                </div>
-                <div class="COF-modal-footer">
-                    <button class="btn COF-form-btn COF-primary form-control" type="submit">Login</button>
-                    <p class="text-sm my-2">or
-                        <span class="black" data-dismiss="modal" data-toggle="modal" data-target="#signp">Signup</span>
-                    </p>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div id="signup" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <span type="button" class="close COF-modal-cross lnr lnr-cross m-2 text-md" data-dismiss="modal"></span>
-            <div class="COF-modal-header">
-                <h5 class="COF-modal-title text-md">Sign up to get started!</h5>
-            </div>
-            <form action="/signup" method="POST">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <input class="COF-input-grey form-control" autocomplete="off" autofocus name="name" placeholder="Name" type="text">
-                    </div>
-                    <div class="form-group">
-                        <input class="COF-input-grey form-control" autocomplete="off" autofocus name="lastname" placeholder="Last name" type="text">
-                    </div>
-                    <div class="form-group">
-                        <input class="COF-input-grey form-control" autocomplete="off" autofocus name="email" placeholder="Email" type="email">
-                    </div>
-                    <div class="form-group">
-                        <input class="COF-input-grey form-control" name="password" placeholder="Password" type="password">
-                    </div>
-                </div>
-                <div class="COF-modal-footer">
-                    <button class="btn COF-form-btn COF-primary form-control" type="submit">Continue</button>
-                    <p class="text-sm my-2">Already have an account? 
-                        <span class="black" data-dismiss="modal" data-toggle="modal" data-target="#login">Login</span>
-                    </p>
-                </div>
-            </form>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

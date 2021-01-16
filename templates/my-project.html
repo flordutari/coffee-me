@@ -10,7 +10,7 @@
                     <p>{{ project["title"] }}</p>
                     <p>You can accept support, memberships, and build a direct relationship with your fans in really straight forward way.</p>
                     <p>Your supporters will love it.</p>
-                    <img class="article-image" src="{{ image }}" alt="reading">
+                    <img class="article-image" src="{{ project["image"] }}" alt="reading">
             </div>
         </section>
     
@@ -21,7 +21,7 @@
     </div>
     {% else %}
     <h3>Create new project</h3>
-    <form action="/my-project" method="POST">
+    <form action="/my-project" method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="projectTitle">Title</label>
             <input type="text" class="form-control" id="projectTitle" name="title" placeholder="My Project">
@@ -30,9 +30,9 @@
             <label for="projectDescription">Description</label>
             <textarea class="form-control" id="projectDescription" name="description" rows="3"></textarea>
         </div>
-        <div class="form-group">
-            <label for="projectImage">Image</label>
-            <input type="file" class="form-control-file" id="projectImage" name="image" placeholder="Image">
+        <div class="custom-file">
+            <label class="form-control custom-file-label" for="image">Image</label>
+            <input type="file" class="form-control custom-file-input" id="projectImage" name="image" placeholder="Image">
         </div>
         <div class="form-group">
             <button class="btn COF-form-btn COF-primary form-control" type="submit">Create</button>

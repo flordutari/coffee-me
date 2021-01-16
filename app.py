@@ -2,7 +2,8 @@ import os
 import pymysql
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
-from PIL import Image
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -29,9 +30,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Configure file uploads
-app.config["UPLOAD_FOLDER"] = "/static/img"
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+# Configure cloudinary
+app.config.from_mapping(
+    CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
+)
 
 # Configure database
 conn = pymysql.connect(
@@ -44,6 +46,7 @@ conn = pymysql.connect(
 )
 
 # Check if the file is valid
+ALLOWED_EXTENSIONS = { "jpg", "jpeg", "png" }
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -109,21 +112,22 @@ def logout():
 @app.route("/my-project", methods=["GET", "POST"])
 @login_required
 def myProject():
-
+    # Connect db
     db = conn.cursor()
     if request.method == "POST":
         user_id = session["user_id"]
         title = request.form.get("title")
         description = request.form.get("description")
-        image = request.form.get("image")
-
+        if request.files:
+            image = upload(request.files["image"])
+        
         # Ensure all data was submitted
         if not (title or description):
             return apology("must provide a title and a description", 403)
 
         # Query database to create project
         db.execute("INSERT INTO `coffee-me`.projects (user_id, title, description, image) VALUES (%s, %s, %s, %s)",
-                    (user_id, title, description, image))
+                    (user_id, title, description, image["url"]))
 
         conn.commit()
         # Redirect user to my project
@@ -132,10 +136,9 @@ def myProject():
         db.execute("SELECT * FROM `coffee-me`.projects WHERE user_id = (%s)",
                     session["user_id"])
         project = db.fetchone()
-        image = Image.open(project["image"])
 
         conn.commit()
-        return render_template("my-project.html", project=project, image=image)
+        return render_template("my-project.html", project=project)
 
 @app.route("/projects", methods=["GET", "POST"])
 @login_required
