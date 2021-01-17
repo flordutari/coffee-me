@@ -1,3 +1,15 @@
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) { ... }
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) { ... }
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) { ... }
+
+// Extra large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) { ... }
+
 body {
     font-family: lato, sans-serif;
     font-size: 1.1rem;
@@ -29,31 +41,32 @@ input:focus {
     color: #CF4327;
 }
 
-.COF-primary {
+/*--- BUTTONS ---*/
+.COF-btn-primary {
     background-color: #CF4327;
     color: #FFF;
     padding-left: 2rem;
     padding-right: 2rem;
 }
 
-.COF-primary:hover, .COF-primary:active {
+.COF-btn-primary:hover, .COF-btn-primary:active {
     background-color: #9E331E;
     color: #FFF;
 }
 
-.COF-black {
+.COF-btn-black {
     background-color: #000;
     color: #FFF;
     padding-left: 2rem;
     padding-right: 2rem;
 }
 
-.COF-black:hover {
+.COF-btn-black:hover {
     background-color: #505050;
     color: #FFF;
 }
 
-.COF-outline {
+.COF-btn-outline {
     background-color: #FFF;
     color: #000;
     line-height: 1rem;
@@ -81,7 +94,7 @@ input:focus {
     font-size: .9rem;
 }
 
-.black {
+.text-black {
     font-weight: 700;
 }
 
@@ -101,7 +114,6 @@ input:focus {
     bottom: 0;
     height: 3rem;
     line-height: 2rem;
-    position: absolute;
     width: 100%;
 }
 
@@ -143,10 +155,11 @@ input:focus {
 }
 
 /*--- PAGES ---*/
-.article-image {
-    width: 100%;
-}
-
-.my-project {
-    margin: 6rem;
+.project-img {
+    height:auto;
+    max-height:25vh;
+    max-width:100%;
+    object-fit: cover;
+    object-position: 100% 0;
+    width:auto;
 }
