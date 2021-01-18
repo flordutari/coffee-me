@@ -7,51 +7,62 @@
             {% if session.project_id %}
             <h3>My project</h3>
             <section class="shadow mb-5 my-5 card">
-                <img class="project-img card-img-top" src="{{ project["image"] }}" alt="reading">
+                <img class="project-img card-img-top" src="{{ project['image'] }}" alt="reading">
                 <div class="card-body p-5">
                     <h5 class="card-title text-black">{{ project["title"] }}</h4>
                     <p class="card-text">{{ project["description"] }}</p>
                     <div class="float-right">
-                        <button class="btn COF-btn-primary" data-toggle="modal" data-target="#editProyect">Edit</button>
-                        <button class="btn COF-btn-outline" data-toggle="modal" data-target="#deleteProyect">Delete</button>
+                        <button class="btn COF-btn-primary" data-toggle="modal" data-target="#editProjectModal" id="editProjectButton">Edit</button>
+                        <button class="btn COF-btn-outline" data-toggle="modal" data-target="#deleteProject">Delete</button>
                     </div>
                 </div>
             </section>
-            <div id="editProyect" class="modal" tabindex="-1" role="dialog">
+            <div id="editProjectModal" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <span type="button" class="close COF-modal-cross lnr lnr-cross m-2 text-md" data-dismiss="modal"></span>
                         <div class="COF-modal-header">
-                            <h5 class="COF-modal-title text-md">Edit your project!</h5>
+                            <h5 class="COF-modal-title text-md">Edit your project</h5>
                         </div>
-                        <form action="/edit-project" method="POST">
-                            <div class="modal-body">
-                                editar proyecto
-                            </div>
-                            <div class="COF-modal-footer">
-                                <button class="btn COF-form-btn COF-btn-primary form-control" type="submit" data-toggle="modal" data-target="#editProject">Edit</button>
-                                <button class="btn COF-form-btn COF-btn-outline" data-dismiss="modal" data-toggle="modal">Cancel</span>
-                            </div>
-                        </form>
+                        <div class="modal-body">
+                            <form action="/edit-project" method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="projectTitle">Title</label>
+                                    <input type="text" class="form-control" id="projectTitle" name="title" placeholder="My Project" value="{{ project['title'] }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="projectDescription">Description</label>
+                                    <textarea class="form-control" id="projectDescription" name="description" rows="3">{{ project["description"] }}</textarea>
+                                </div>
+                                <div class="form-group custom-file">
+                                    <label class="form-control custom-file-label" for="projectImage">{{ project['image'] }}</label>
+                                    <input type="file" class="form-control custom-file-input" id="projectImage" name="image" value="{{ project['image'] }}">
+                                </div>
+                                <div class="float-right my-4">
+                                    <button class="btn COF-btn-primary" type="submit" data-toggle="modal" data-target="#editProjectModal">Edit</button>
+                                    <button class="btn COF-btn-outline" data-dismiss="modal" data-toggle="modal">Cancel</span>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div id="deleteProyect" class="modal" tabindex="-1" role="dialog">
+            <div id="deleteProject" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <span type="button" class="close COF-modal-cross lnr lnr-cross m-2 text-md" data-dismiss="modal"></span>
                         <div class="COF-modal-header">
                             <h5 class="COF-modal-title text-md">Are you sure you want to delete your project?</h5>
                         </div>
-                        <form action="/edit-project" method="POST">
-                            <div class="modal-body">
-                                eliminar proyecto
-                            </div>
-                            <div class="COF-modal-footer">
-                                <button class="btn COF-form-btn COF-btn-primary form-control" type="submit" data-toggle="modal" data-target="#editProject">Delete</button>
-                                <button class="btn COF-form-btn COF-btn-outline" data-dismiss="modal" data-toggle="modal">Cancel</span>
-                            </div>
-                        </form>
+                        <div class="modal-body">
+                            <form action="/delete-project" method="POST" enctype="multipart/form-data">
+                                <p>If you delete the project, this action cannot be reversed.</p>
+                                <div class="float-right my-4">
+                                    <button class="btn COF-btn-primary" type="submit" data-toggle="modal" data-target="#deleteProject">Delete</button>
+                                    <button class="btn COF-btn-outline" data-dismiss="modal" data-toggle="modal">Cancel</span>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
