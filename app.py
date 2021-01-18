@@ -55,6 +55,41 @@ def allowed_file(filename):
 def index():
     return render_template("index.html")
 
+@app.route("/delete-project", methods=["POST"])
+def deleteProject():
+    # Connect db
+    db = conn.cursor()
+
+    if "project_id" in session:
+        # Query database to delete the project
+        db.execute("DELETE FROM `coffee-me`.projects WHERE id = %s",
+                    (session["project_id"]))
+        session.pop("project_id", None)
+
+    return redirect("/my-project")
+
+@app.route("/edit-project", methods=["POST"])
+def editProject():
+    # Connect db
+    db = conn.cursor()
+
+    title = request.form.get("title")
+    description = request.form.get("description")
+    if request.files and request.files["image"] != request.form.get("image"):
+        image = upload(request.files["image"])
+    else:
+        image = request.form.get("image")
+    
+    # Ensure all data was submitted
+    if not (title or description):
+        return apology("must provide a title and a description", 403)
+
+    if "project_id" in session:
+        # Query database to update the project
+        db.execute("UPDATE `coffee-me`.projects SET title = %s, description = %s, image = %s WHERE id = %s",
+                    (title, description, image["url"], session["project_id"]))
+    return redirect("/my-project")
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     # Forget any user_id
@@ -114,6 +149,7 @@ def logout():
 def myProject():
     # Connect db
     db = conn.cursor()
+
     if request.method == "POST":
         user_id = session["user_id"]
         title = request.form.get("title")
@@ -128,8 +164,9 @@ def myProject():
         # Query database to create project
         db.execute("INSERT INTO `coffee-me`.projects (user_id, title, description, image) VALUES (%s, %s, %s, %s)",
                     (user_id, title, description, image["url"]))
-
+        session["project_id"]= db.lastrowid
         conn.commit()
+
         # Redirect user to my project
         return redirect("/my-project")
     else:
