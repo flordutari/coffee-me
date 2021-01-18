@@ -15,6 +15,11 @@ body {
     font-size: 1.1rem;
 }
 
+main {
+    min-height:100%;
+    position:relative;
+}
+
 /*
 lightest-gray: #F8F8F8
 light-gray: #F0F0F0
@@ -118,6 +123,7 @@ input:focus {
     bottom: 0;
     height: 3rem;
     line-height: 2rem;
+    position:absolute;
     width: 100%;
 }
 
@@ -165,5 +171,4 @@ input:focus {
     max-width: 100%;
     object-fit: cover;
     object-position: 100% 0;
-    width:auto;
 }
