@@ -1,9 +1,50 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    {% if session.project_id %}
-        project
-    {% else %}
-        no project
-    {% endif %}
+<div class="container">
+    <form class="form-group px-2">
+        <div class="input-group">
+            <input type="text" class="input-group form-control" placeholder="Search this blog">
+            <div class="input-group-append">
+                <button class="btn COF-btn-black" type="button">
+                <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="row row-cols-1 row-cols-md-1">
+        {% for project in projects %}
+        <div id="{{ project.id }}" class="col-md-6 col-lg-4 p-4">
+            <a href="/project-{{ project.id }}" class="card h-100 shadow">
+            <img src="{{ project.image }}" class="card-img-top" alt="Project image">
+            <div class="card-body">
+                <h5 class="card-title">{{ project.title }}</h5>
+                <p class="card-text COF-card-project-description">{{ project.description }}</p>
+            </div>
+            </a>
+        </div>
+        {% endfor %}
+    </section>
+    <ul class="pagination float-right">
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('projects', page=page - 1, per_page=per_page) }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        </li>
+        {% for page in pagination.pages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('projects', page=page, per_page=per_page) }}">
+                {{ page }}
+            </a>
+        </li>
+        {% endfor %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('projects', page=page + 1, per_page=per_page) }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+            </a>
+        </li>
+    </ul>
+</div>
 {% endblock %}
