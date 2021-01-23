@@ -2,7 +2,17 @@
 
 {% block main %}
 <div class="container">
-    <div class="row row-cols-1 row-cols-md-3">
+    <form class="form-group px-2">
+        <div class="input-group">
+            <input type="text" class="input-group form-control" placeholder="Search this blog">
+            <div class="input-group-append">
+                <button class="btn COF-btn-black" type="button">
+                <i class="fa fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="row row-cols-1 row-cols-md-1">
         {% for project in projects %}
         <div id="{{ project.id }}" class="col-md-6 col-lg-4 p-4">
             <a href="/project-{{ project.id }}" class="card h-100 shadow">
@@ -14,7 +24,7 @@
             </a>
         </div>
         {% endfor %}
-    </div>
+    </section>
     <ul class="pagination float-right">
         <li class="page-item">
             <a class="page-link" href="{{ url_for('projects', page=page - 1, per_page=per_page) }}" aria-label="Previous">

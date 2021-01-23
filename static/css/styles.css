@@ -163,6 +163,10 @@ input:focus {
     height: 3rem;
 }
 
+.input-group button {
+    line-height: initial;
+}
+
 /*--- PAGES ---*/
 .article-image {
     width: 100%;

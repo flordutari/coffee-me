@@ -1,44 +1,45 @@
 import os
 from cloudinary.uploader import upload
-from cloudinary.utils import cloudinary_url
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from flask_paginate import Pagination, get_page_args
 import pymysql
 import stripe
 from tempfile import mkdtemp
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from werkzeug.exceptions import HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required
 
 # Configure application
-app=Flask(__name__)
+app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
-app.config["TEMPLATES_AUTO_RELOAD"]=True
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
 
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
-    response.headers["Cache-Control"]="no-cache, no-store, must-revalidate"
-    response.headers["Expires"]=0
-    response.headers["Pragma"]="no-cache"
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
     return response
 
+
 # Configure session to use filesystem
-app.config["SESSION_FILE_DIR"]=mkdtemp()
-app.config["SESSION_PERMANENT"]=False
-app.config["SESSION_TYPE"]="filesystem"
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure stripe
-stripe_keys={
+stripe_keys = {
   "secret_key": os.environ["SECRET_KEY"],
   "publishable_key": os.environ["PUBLISHABLE_KEY"]
 }
 
-stripe.api_key=stripe_keys["secret_key"]
+stripe.api_key = stripe_keys["secret_key"]
 
 # Configure cloudinary
 app.config.from_mapping(
@@ -46,7 +47,7 @@ app.config.from_mapping(
 )
 
 # Configure database
-conn=pymysql.connect(
+conn = pymysql.connect(
     host=os.environ["DB_HOSTNAME"],
     port=3306,
     user=os.environ["DB_USERNAME"],
@@ -56,20 +57,24 @@ conn=pymysql.connect(
 )
 
 # Check if the file is valid
-ALLOWED_EXTENSIONS={ "jpg", "jpeg", "png" }
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
+
+
 def allowed_file(filename):
     return "." in filename and \
            filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
 @app.route("/checkout", methods=["GET", "POST"])
 def checkout():
-    amount=500
+    amount = 500
 
-    customer=stripe.Customer.create(
+    customer = stripe.Customer.create(
         email="sample@customer.com",
         source=request.form["stripeToken"]
     )
@@ -83,40 +88,44 @@ def checkout():
 
     return render_template("checkout.html", amount=amount)
 
+
 @app.route("/delete-project", methods=["POST"])
-def deleteProject():
+def delete_project():
     # Connect db
-    db=conn.cursor()
+    db = conn.cursor()
 
     if "project_id" in session:
         # Query database to delete the project
-        db.execute("DELETE FROM `coffee-me`.projects WHERE id=%s",
-                    (session["project_id"]))
+        db.execute("DELETE FROM `coffee-me`.projects WHERE id = %s",
+                   (session["project_id"]))
         session.pop("project_id", None)
 
     return redirect("/my-project")
 
-@app.route("/edit-project", methods=["POST"])
-def editProject():
-    # Connect db
-    db=conn.cursor()
 
-    title=request.form.get("title")
-    description=request.form.get("description")
+@app.route("/edit-project", methods=["POST"])
+def edit_project():
+    # Connect db
+    db = conn.cursor()
+
+    title = request.form.get("title")
+    description = request.form.get("description")
     if request.files and request.files["image"] != request.form.get("image"):
-        image=upload(request.files["image"])
+        image = upload(request.files["image"])
     else:
-        image=request.form.get("image")
-    
+        image = request.form.get("image")
+
     # Ensure all data was submitted
     if not (title or description):
         return apology("must provide a title and a description", 403)
 
     if "project_id" in session:
         # Query database to update the project
-        db.execute("UPDATE `coffee-me`.projects SET title=%s, description=%s, image=%s WHERE id=%s",
-                    (title, description, image["url"], session["project_id"]))
+        db.execute(
+            "UPDATE `coffee-me`.projectsSET title=%s, description = %s,image = %s WHERE id = %s",
+            (title, description, image["url"], session["project_id"]))
     return redirect("/my-project")
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -135,26 +144,26 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for email
-        email=request.form.get("email")
-        db=conn.cursor()
-        db.execute("SELECT * FROM `coffee-me`.users WHERE email=%s",
-                    (email))
-        rows=db.fetchall()
+        email = request.form.get("email")
+        db = conn.cursor()
+        db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s", (email))
+        rows = db.fetchall()
 
         # Ensure email exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"],
+                                                     request.form.get("password")):
             return apology("invalid email and/or password", 403)
 
         # Remember which user has logged in
-        session["user_id"]=rows[0]["id"]
+        session["user_id"] = rows[0]["id"]
 
-        db=conn.cursor()
-        db.execute("SELECT * FROM `coffee-me`.projects WHERE user_id=%s",
-                    session["user_id"])
-        rows=db.fetchall()
+        db = conn.cursor()
+        db.execute("SELECT * FROM `coffee-me`.projects WHERE user_id = %s",
+                   session["user_id"])
+        rows = db.fetchall()
 
         if len(rows) > 0:
-            session["project_id"]=rows[0]["id"]
+            session["project_id"] = rows[0]["id"]
 
         conn.commit()
         # Redirect user to home page
@@ -164,6 +173,7 @@ def login():
     else:
         return render_template("login.html")
 
+
 @app.route("/logout")
 def logout():
     # Forget any user_id
@@ -172,38 +182,40 @@ def logout():
     # Redirect user to index
     return redirect("/")
 
+
 @app.route("/my-project", methods=["GET", "POST"])
 @login_required
-def myProject():
+def my_project():
     # Connect db
-    db=conn.cursor()
+    db = conn.cursor()
 
     if request.method == "POST":
-        user_id=session["user_id"]
-        title=request.form.get("title")
-        description=request.form.get("description")
+        user_id = session["user_id"]
+        title = request.form.get("title")
+        description = request.form.get("description")
         if request.files:
-            image=upload(request.files["image"])
-        
+            image = upload(request.files["image"])
+
         # Ensure all data was submitted
         if not (title or description):
             return apology("must provide a title and a description", 403)
 
         # Query database to create project
         db.execute("INSERT INTO `coffee-me`.projects (user_id, title, description, image) VALUES (%s, %s, %s, %s)",
-                    (user_id, title, description, image["url"]))
-        session["project_id"]= db.lastrowid
+                   (user_id, title, description, image["url"]))
+        session["project_id"] = db.lastrowid
         conn.commit()
 
         # Redirect user to my project
         return redirect("/my-project")
     else:
-        db.execute("SELECT * FROM `coffee-me`.projects WHERE user_id=(%s)",
-                    session["user_id"])
-        project=db.fetchone()
+        db.execute("SELECT * FROM `coffee-me`.projects WHERE user_id = %s",
+                   session["user_id"])
+        project = db.fetchone()
 
         conn.commit()
         return render_template("my-project.html", project=project)
+
 
 @app.route("/payment", methods=["GET"])
 @login_required
@@ -211,14 +223,15 @@ def payment():
     if request.method == "GET":
         return render_template("payment.html", key=stripe_keys["publishable_key"])
 
+
 @app.route("/projects", methods=["GET"])
 def projects():
     # Create DB connection
-    db=conn.cursor()
+    db = conn.cursor()
     # Get projects
     db.execute("SELECT * FROM `coffee-me`.projects")
-    projects=db.fetchall()
-    
+    projects = db.fetchall()
+
     page, per_page, offset = get_page_args(page_parameter="page",
                                            per_page_parameter="per_page")
     total = len(projects)
@@ -230,6 +243,12 @@ def projects():
                            per_page=per_page,
                            pagination=pagination,
                            )
+
+
+@app.route("/search", methods=["POST"])
+def search_project():
+    return True
+
 
 @app.route("/signup", methods=["POST"])
 def signup():
@@ -246,27 +265,28 @@ def signup():
         return apology("must provide password", 403)
 
     # Query database for email
-    email=request.form.get("email")
-    db=conn.cursor()
-    db.execute("SELECT * FROM `coffee-me`.users WHERE email=%s",
-                (email))
-    rows=db.fetchall()
+    email = request.form.get("email")
+    db = conn.cursor()
+    db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
+               (email))
+    rows = db.fetchall()
 
     # Ensure that email doesn't exist
     if len(rows) > 0:
         return apology("The email provided already exists! choose another please", 403)
 
-    hash=generate_password_hash(request.form.get("password"))
+    hash = generate_password_hash(request.form.get("password"))
     # Query database to create user
     db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
-                (email, hash))
+               (email, hash))
 
     conn.commit()
     # Redirect user to login
     return redirect("/")
 
+
 def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
-        e=InternalServerError()
+        e = InternalServerError()
     return apology(e.name, e.code)
