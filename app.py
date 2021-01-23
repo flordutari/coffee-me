@@ -3,6 +3,7 @@ from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from flask_session import Session
+from flask_paginate import Pagination, get_page_args
 import pymysql
 import stripe
 from tempfile import mkdtemp
@@ -157,7 +158,7 @@ def login():
 
         conn.commit()
         # Redirect user to home page
-        return redirect("/payment")
+        return redirect("/projects")
 
     # User reached route via GET
     else:
@@ -210,11 +211,25 @@ def payment():
     if request.method == "GET":
         return render_template("payment.html", key=stripe_keys["publishable_key"])
 
-@app.route("/projects", methods=["GET", "POST"])
-@login_required
+@app.route("/projects", methods=["GET"])
 def projects():
-    if request.method == "GET":
-        return render_template("projects.html")
+    # Create DB connection
+    db=conn.cursor()
+    # Get projects
+    db.execute("SELECT * FROM `coffee-me`.projects")
+    projects=db.fetchall()
+    
+    page, per_page, offset = get_page_args(page_parameter="page",
+                                           per_page_parameter="per_page")
+    total = len(projects)
+    pagination_projects = projects[offset: offset + per_page]
+    pagination = Pagination(page=page, per_page=per_page, total=total)
+    return render_template("projects.html",
+                           projects=pagination_projects,
+                           page=page,
+                           per_page=per_page,
+                           pagination=pagination,
+                           )
 
 @app.route("/signup", methods=["POST"])
 def signup():

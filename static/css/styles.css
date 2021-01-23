@@ -16,8 +16,7 @@ body {
 }
 
 main {
-    min-height:100%;
-    position:relative;
+    padding: 8rem 2rem;
 }
 
 /*
@@ -123,7 +122,7 @@ input:focus {
     bottom: 0;
     height: 3rem;
     line-height: 2rem;
-    position:absolute;
+    position: fixed;
     width: 100%;
 }
 
@@ -165,10 +164,41 @@ input:focus {
 }
 
 /*--- PAGES ---*/
+.article-image {
+    width: 100%;
+}
+
 .project-img {
     height: 25vh;
     max-height: 30vh;
     max-width: 100%;
     object-fit: cover;
     object-position: 100% 0;
+}
+
+/*--- CARDS ---*/
+.card {
+    border: none;
+}
+
+.card-columns {
+    @include media-breakpoint-only(lg) {
+        column-count: 2;
+    }
+    @include media-breakpoint-only(xl) {
+        column-count: 3;
+    }
+}
+
+.card-img-top {
+    height: 20vh;
+    max-height: 25vh;
+    max-width: 100%;
+    object-fit: cover;
+    object-position: 100% 0;
+}
+
+a.card {
+    color: #000000;
+    text-decoration: none;
 }
