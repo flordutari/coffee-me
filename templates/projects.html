@@ -2,29 +2,39 @@
 
 {% block main %}
 <div class="container">
-    <form class="form-group px-2">
+    <h3 class="COF-section-header">Explore the new projects</h3>
+    <form class="form-group px-2 mb-4" action="/search" method="POST">
         <div class="input-group">
-            <input type="text" class="input-group form-control" placeholder="Search this blog">
+            <input name="search" type="text" class="input-group form-control" placeholder="Search project" value="{{ search }}">
             <div class="input-group-append">
-                <button class="btn COF-btn-black" type="button">
-                <i class="fa fa-search"></i>
+                <button class="btn COF-btn-black" type="submit">
+                    <i class="fa fa-search"></i>
                 </button>
             </div>
         </div>
     </form>
-    <div class="row row-cols-1 row-cols-md-1">
+    <section class="row row-cols-1 row-cols-md-1">
+        {% if projects %}
         {% for project in projects %}
-        <div id="{{ project.id }}" class="col-md-6 col-lg-4 p-4">
-            <a href="/project-{{ project.id }}" class="card h-100 shadow">
-            <img src="{{ project.image }}" class="card-img-top" alt="Project image">
-            <div class="card-body">
-                <h5 class="card-title">{{ project.title }}</h5>
-                <p class="card-text COF-card-project-description">{{ project.description }}</p>
-            </div>
+        <div id="{{ project.id }}" class="col-md-6 col-lg-4 col-xl-3 p-4">
+            <a href="{{ url_for('project', id=project.id) }}" class="card h-100 shadow">
+                <img src="{{ project.image }}" class="card-img-top" alt="Project image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text COF-card-project-description COF-text-grey">{{ project.description }}</p>
+                    <div class="COF-coffee-counter">
+                        <span>{{ project.coffees }}</span>
+                        <span class="lnr lnr-coffee-cup COF-text-primary"></span>
+                    </div>
+                </div>
             </a>
         </div>
         {% endfor %}
+        {% else %}
+        There are no projects
+        {% endif %}
     </section>
+    {% if pagination.pages|length > 1 %}
     <ul class="pagination float-right">
         <li class="page-item">
             <a class="page-link" href="{{ url_for('projects', page=page - 1, per_page=per_page) }}" aria-label="Previous">
@@ -46,5 +56,7 @@
             </a>
         </li>
     </ul>
+    {% else %}
+    {% endif %}
 </div>
 {% endblock %}

@@ -9,14 +9,20 @@
 
 // Extra large devices (large desktops, 1200px and up)
 @media (min-width: 1200px) { ... }
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
 
 body {
     font-family: lato, sans-serif;
     font-size: 1.1rem;
 }
 
-main {
-    padding: 8rem 2rem;
+.container {
+    padding: 4rem 2rem 8rem 2rem;
 }
 
 /*
@@ -46,12 +52,42 @@ input:focus {
 
 /*--- GENERAL ---*/
 .COF-text-primary {
-    color: #CF4327;
+    color: #DC8418;
+}
+
+.COF-text-special {
+    color: #E8B921;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 1.5rem;
+}
+
+.COF-text-grey {
+    color: #505050;
+}
+
+.COF-section-header {
+    margin-bottom: 4rem;
+}
+
+.COF-grey-box {
+    border: 1px solid #A9A9A9;
+    background-color: #F0F0F0;
+}
+
+.COF-primary-box {
+    border: 1px solid #DC8418;
+    background-color: #EBDBCA;
+    color: #DC8418;
+    margin: 0 .1rem;
+}
+
+.COF-grey-box input {
+    width: 3rem;
 }
 
 /*--- BUTTONS ---*/
 .COF-btn-primary {
-    background-color: #CF4327;
+    background-color: #DC8418;
     color: #FFF;
     padding-left: 2rem;
     padding-right: 2rem;
@@ -112,8 +148,9 @@ input:focus {
     width: 2rem;
 }
 
-.navbar .lnr {
+.lnr {
     vertical-align: text-bottom;
+    font-size: 1.2rem;
 }
 
 /*--- FOOTER ---*/
@@ -169,7 +206,7 @@ input:focus {
 
 /*--- PAGES ---*/
 .article-image {
-    width: 100%;
+    width: 70%;
 }
 
 .project-img {
@@ -205,4 +242,25 @@ input:focus {
 a.card {
     color: #000000;
     text-decoration: none;
+}
+
+.COF-coffee-counter {
+    bottom: 0;
+    padding: 1.2rem;
+    position: absolute;
+    right: 0;
+}
+
+/*--- PAGINATION ---*/
+.pagination {
+    justify-content: flex-end;
+}
+
+.pagination a {
+    color: #000000;
+}
+
+.pagination a:hover  {
+    //color: #D2840F;
+    color: #E59010;
 }

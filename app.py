@@ -1,6 +1,6 @@
 import os
 from cloudinary.uploader import upload
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, url_for
 from flask_session import Session
 from flask_paginate import Pagination, get_page_args
 import pymysql
@@ -224,16 +224,35 @@ def payment():
         return render_template("payment.html", key=stripe_keys["publishable_key"])
 
 
+@app.route("/project-<string:id>", methods=["GET"])
+def project(id):
+    # Connect db
+    db = conn.cursor()
+    db.execute("SELECT * FROM `coffee-me`.projects WHERE id = %s", id)
+    project = db.fetchone()
+
+    conn.commit()
+    return render_template("project.html", project=project)
+
+
 @app.route("/projects", methods=["GET"])
 def projects():
+    title = request.args.get("title") or ""
+    query = '%' + title + '%'
+
     # Create DB connection
     db = conn.cursor()
     # Get projects
-    db.execute("SELECT * FROM `coffee-me`.projects")
+    if title:
+        db.execute("SELECT * FROM `coffee-me`.projects WHERE title LIKE %s", query)
+    else:
+        db.execute("SELECT * FROM `coffee-me`.projects")
+
     projects = db.fetchall()
 
     page, per_page, offset = get_page_args(page_parameter="page",
                                            per_page_parameter="per_page")
+    # page = request.args.get(get_page_parameter(), type=int, default=1)
     total = len(projects)
     pagination_projects = projects[offset: offset + per_page]
     pagination = Pagination(page=page, per_page=per_page, total=total)
@@ -242,12 +261,14 @@ def projects():
                            page=page,
                            per_page=per_page,
                            pagination=pagination,
+                           search=title
                            )
 
 
 @app.route("/search", methods=["POST"])
-def search_project():
-    return True
+def search_by_title():
+    title = request.form.get("search")
+    return redirect((url_for('projects', title=title)))
 
 
 @app.route("/signup", methods=["POST"])
