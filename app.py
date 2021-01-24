@@ -224,7 +224,7 @@ def payment():
         return render_template("payment.html", key=stripe_keys["publishable_key"])
 
 
-@app.route("/project/<project_path>", methods=["GET"])
+@app.route("/project-<project_id>", methods=["GET"])
 def project():
     return render_template("project.html")
 

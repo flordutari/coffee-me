@@ -206,3 +206,16 @@ a.card {
     color: #000000;
     text-decoration: none;
 }
+
+/*--- PAGINATION ---*/
+.pagination {
+    justify-content: flex-end;
+}
+
+.pagination a {
+    color: #000000;
+}
+
+.pagination a:hover  {
+    color: #CF4327;
+}

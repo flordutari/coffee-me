@@ -15,7 +15,7 @@
     <section class="row row-cols-1 row-cols-md-1">
         {% if projects %}
         {% for project in projects %}
-        <div id="{{ project.id }}" class="col-md-6 col-lg-4 p-4">
+        <div id="{{ project.id }}" class="col-md-6 col-lg-4 col-xl-3 p-4">
             <a href="/project-{{ project.id }}" class="card h-100 shadow">
             <img src="{{ project.image }}" class="card-img-top" alt="Project image">
             <div class="card-body">
