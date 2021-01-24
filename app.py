@@ -224,9 +224,16 @@ def payment():
         return render_template("payment.html", key=stripe_keys["publishable_key"])
 
 
-@app.route("/project-<project_id>", methods=["GET"])
-def project():
-    return render_template("project.html")
+@app.route("/project-<string:id>", methods=["GET"])
+def project(id):
+    # Connect db
+    db = conn.cursor()
+    db.execute("SELECT * FROM `coffee-me`.projects WHERE id = %s", id)
+    project = db.fetchone()
+
+    conn.commit()
+    return render_template("project.html", project=project)
+
 
 @app.route("/projects", methods=["GET"])
 def projects():
