@@ -36,6 +36,7 @@ almost-black: #505050
 
 a, a:focus, a:hover {
     text-decoration: none;
+    color: #000000;
 }
 
 a:hover {
@@ -179,10 +180,6 @@ input:focus {
 .COF-modal-title, .COF-modal-footer {
     padding: 1rem;
     text-align: center;
-}
-
-.COF-modal-footer {
-    margin-bottom: 1rem;
 }
 
 .COF-modal-cross {

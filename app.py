@@ -271,39 +271,47 @@ def search_by_title():
     return redirect((url_for('projects', title=title)))
 
 
-@app.route("/signup", methods=["POST"])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
-    # Ensure name and lastname were submitted
-    if not request.form.get("name") or not request.form.get("lastname"):
-        return apology("must provide name and lastname", 403)
+    # User reached route via POST
+    if request.method == "POST":
 
-    # Ensure user email was submitted
-    if not request.form.get("email"):
-        return apology("must provide an email", 403)
+        # Ensure name and lastname were submitted
+        if not request.form.get("name") or not request.form.get("lastname"):
+            return apology("must provide name and lastname", 403)
 
-    # Ensure password was submitted
-    elif not request.form.get("password"):
-        return apology("must provide password", 403)
+        # Ensure user email was submitted
+        if not request.form.get("email"):
+            return apology("must provide an email", 403)
 
-    # Query database for email
-    email = request.form.get("email")
-    db = conn.cursor()
-    db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
-               (email))
-    rows = db.fetchall()
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 403)
 
-    # Ensure that email doesn't exist
-    if len(rows) > 0:
-        return apology("The email provided already exists! choose another please", 403)
+        # Query database for email
+        email = request.form.get("email")
+        db = conn.cursor()
+        db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
+                (email))
+        rows = db.fetchall()
 
-    hash = generate_password_hash(request.form.get("password"))
-    # Query database to create user
-    db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
-               (email, hash))
+        # Ensure that email doesn't exist
+        if len(rows) > 0:
+            return apology("The email provided already exists! choose another please", 403)
 
-    conn.commit()
-    # Redirect user to login
-    return redirect("/")
+        hash = generate_password_hash(request.form.get("password"))
+        # Query database to create user
+        db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
+                  (email, hash))
+
+        conn.commit()
+
+        # Redirect user to index
+        return redirect("/")
+
+        # User reached route via GET
+    else:
+        return render_template("signup.html")
 
 
 def errorhandler(e):
