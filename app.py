@@ -70,6 +70,13 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/buy-coffee", methods=["POST"])
+def buyCoffee():
+    
+
+    return render_template("thanks.html")
+
+
 @app.route("/checkout", methods=["GET", "POST"])
 def checkout():
     amount = 500
@@ -221,7 +228,8 @@ def my_project():
 @login_required
 def payment():
     if request.method == "GET":
-        return render_template("payment.html", key=stripe_keys["publishable_key"])
+        return render_template("payment.html",
+                               key=stripe_keys["publishable_key"])
 
 
 @app.route("/project-<string:id>", methods=["GET"])
@@ -292,7 +300,7 @@ def signup():
         email = request.form.get("email")
         db = conn.cursor()
         db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
-                (email))
+                   (email))
         rows = db.fetchall()
 
         # Ensure that email doesn't exist
@@ -302,7 +310,7 @@ def signup():
         hash = generate_password_hash(request.form.get("password"))
         # Query database to create user
         db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
-                  (email, hash))
+                   (email, hash))
 
         conn.commit()
 
