@@ -162,6 +162,12 @@ input[type=number] {
     font-weight: 700;
 }
 
+.COF-text-background-grey {
+    background-color: #F8F8F8;
+    padding: 1rem;
+    border-radius: .1rem;
+}
+
 /*--- NAVBAR ---*/
 .COF-nav-logo {
     margin-right: .5rem;

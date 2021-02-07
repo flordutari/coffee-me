@@ -2,13 +2,23 @@
 
 {% block main %}
 <div class="container">
-    <div class="row">
+    <section class="row">
         <div class="col-7">
             <a href="{{ url_for('project', id=project.id) }}" class="card h-100 shadow">
                 <img src="{{ project.image }}" class="card-img-top" alt="Project image">
                 <div class="card-body">
                     <h5 class="card-title">{{ project.title }}</h5>
                     <p class="card-text COF-card-project-description">{{ project.description }}</p>
+                    <div class="COF-coffee-counter">
+                        <span class="lnr lnr-coffee-cup COF-text-primary"></span>
+                        <span>x</span>
+                        <span>{{ project.coffees }}</span>
+                        {% if project.coffees > 1 %}
+                            <span>coffees received</span>
+                        {% else %}
+                            <span>coffee received</span>
+                        {% endif %}
+                    </div>
                 </div>
             </a>
         </div>
@@ -42,6 +52,36 @@
             </div>
             </a>
         </div>
-    </div>
+    </section>
+    <section class="row">
+        <div class="col-7">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.message %}
+                    <div class="card shadow p-3 my-4">
+                    {% if message.message_name %}
+                        {% if message.coffees > 1 %}
+                            <p><span class="text-black">{{ message.message_name }}</span> bought {{ message.coffees }} coffees</p>
+                        {% else %}
+                            <p><span class="text-black">{{ message.message_name }}</span> bought 1 coffee</p>
+                        {% endif %}
+                    {% else %}
+                        {% if message.coffees > 1 %}
+                            <p>Someone bougth {{ message.coffees }} coffee</p>
+                        {% else %}
+                            <p>Someone bougth 1 coffee</p>
+                        {% endif %}
+                    {% endif %}
+                    <p class="COF-text-background-grey">
+                        {{ message.message }}
+                    </p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <p>There are no messages</p>
+        {% endif %}
+        </div>
+    </section>
 </div>
 {% endblock %}

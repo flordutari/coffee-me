@@ -284,13 +284,18 @@ def payment():
 def project(id):
     # Connect db
     db = conn.cursor()
+    # Get project info
     db.execute("SELECT * FROM `coffee-me`.projects WHERE id = %s", id)
     project = db.fetchone()
+
+    # Get project messages
+    db.execute("SELECT coffees, message, message_name FROM `coffee-me`.transaction WHERE project_id = %s", id)
+    messages = db.fetchall()
 
     conn.commit()
     # Save get referrer in session
     session["referrer"] = request.url
-    return render_template("project.html", project=project)
+    return render_template("project.html", project=project, messages=messages)
 
 
 @app.route("/projects")
