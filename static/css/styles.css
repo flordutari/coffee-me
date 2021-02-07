@@ -36,6 +36,7 @@ almost-black: #505050
 
 a, a:focus, a:hover {
     text-decoration: none;
+    color: #000000;
 }
 
 a:hover {
@@ -50,6 +51,17 @@ input:focus {
     outline: 2px solid #000;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /*--- GENERAL ---*/
 .COF-text-primary {
     color: #DC8418;
@@ -58,11 +70,15 @@ input:focus {
 .COF-text-special {
     color: #E8B921;
     font-family: 'Permanent Marker', cursive;
-    font-size: 1.5rem;
+    font-size: 1.9rem;
 }
 
 .COF-text-grey {
     color: #505050;
+}
+
+.COF-text-warning {
+    color: #7E115B;
 }
 
 .COF-section-header {
@@ -113,17 +129,21 @@ input:focus {
 .COF-btn-outline {
     background-color: #FFF;
     color: #000;
-    line-height: 1rem;
+    line-height: 1.1rem;
     padding-left: 1rem;
     padding-right: 1rem;
 }
 
 .btn {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
 }
 
 .COF-btn-group .btn {
     margin-left: .5rem;
+}
+
+.text-xl {
+    font-size: 1.8rem;
 }
 
 .text-lg {
@@ -142,10 +162,16 @@ input:focus {
     font-weight: 700;
 }
 
+.COF-text-background-grey {
+    background-color: #F8F8F8;
+    padding: 1rem;
+    border-radius: .1rem;
+}
+
 /*--- NAVBAR ---*/
-.navbar img {
+.COF-nav-logo {
     margin-right: .5rem;
-    width: 2rem;
+    width: 2.5rem;
 }
 
 .lnr {
@@ -179,10 +205,6 @@ input:focus {
 .COF-modal-title, .COF-modal-footer {
     padding: 1rem;
     text-align: center;
-}
-
-.COF-modal-footer {
-    margin-bottom: 1rem;
 }
 
 .COF-modal-cross {

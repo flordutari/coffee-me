@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="container">
+    <div class="row">
+        <div class="col-8 m-auto">
+            <div class="form-group">
+                <h5 class="COF-modal-title text-md">Welcome back!</h5>
+                <p class="COF-text-warning">{{ phrase }}</p>
+                <form action="/login" method="POST">
+                        <div class="form-group">
+                            <input class="COF-input-grey form-control" autocomplete="off" autofocus name="email" placeholder="Email" type="email">
+                        </div>
+                        <div class="form-group">
+                            <input class="COF-input-grey form-control" name="password" placeholder="Password" type="password">
+                        </div>
+                    <div class="form-group mt-4">
+                        <button class="btn COF-form-btn COF-btn-primary form-control" type="submit">Login</button>
+                        <p class="text-sm my-2 text-center">or
+                            <a class="text-black" href="/signup">Signup</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

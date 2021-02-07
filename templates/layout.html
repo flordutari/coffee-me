@@ -15,25 +15,27 @@
     <title>Coffee me</title>
 </head>
 <body>
-    {% if session.user_id %}
+    {% if session.user and session.user.id %}
     <nav class="navbar border-bottom">
-        <a href="/">
-            <img src="/static/images/coffee-logo.png" alt="coffee logo" />
+        <a class="d-flex" href="/">
+            <img class="COF-nav-logo" src="/static/images/coffee-logo.png" alt="coffee logo" />
+            <span class="COF-text-special ml-2">Coffee me</span>
         </a>
         <div>
             <a href="/logout" class="btn COF-btn-outline">Logout</a>
-            <span class="lnr lnr-user" />
+            <span class="COF-text-warning align-bottom">USD {{ session.user.cash }}</span>
+            <span class="align-middle lnr lnr-user ml-2" />
         </div>
     </nav>
     {% else %}
     <nav class="navbar p-4">
-        <a href="/">
-            <img src="/static/images/coffee-logo.png" alt="coffee logo" />
-            <span class="COF-text-special">Coffee me</span>
+        <a class="d-flex" href="/">
+            <img class="COF-nav-logo" src="/static/images/coffee-logo.png" alt="coffee logo" />
+            <span class="COF-text-special ml-2">Coffee me</span>
         </a>
         <div class="COF-btn-group">
-            <button class="btn COF-btn-outline" data-toggle="modal" data-target="#login">Login</button>
-            <button class="btn COF-btn-black" data-toggle="modal" data-target="#signup">Signup</button>
+            <a href="/login" class="btn COF-btn-outline">Login</a>
+            <a href="/signup" class="btn COF-btn-black">Signup</a>
         </div>
     </nav>
     {% endif %}

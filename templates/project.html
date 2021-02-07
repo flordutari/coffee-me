@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="container">
+    <section class="row">
+        <div class="col-7">
+            <a href="{{ url_for('project', id=project.id) }}" class="card h-100 shadow">
+                <img src="{{ project.image }}" class="card-img-top" alt="Project image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.title }}</h5>
+                    <p class="card-text COF-card-project-description">{{ project.description }}</p>
+                    <div class="COF-coffee-counter">
+                        <span class="lnr lnr-coffee-cup COF-text-primary"></span>
+                        <span>x</span>
+                        <span>{{ project.coffees }}</span>
+                        {% if project.coffees > 1 %}
+                            <span>coffees received</span>
+                        {% else %}
+                            <span>coffee received</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-5">
+            <div class="card h-100 shadow p-5">
+                <h5>Contribute with a coffee</h5>
+                <form action="/buy-coffee" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" id="projectId" name="projectId" value="{{ project.id }}">
+                        <div class="COF-grey-box d-flex form-group justify-content-between p-2 rounded">
+                        <div class="my-auto">
+                            <span class="lnr lnr-coffee-cup COF-text-primary"></span>
+                            <span class="lnr lnr-cross mx-1"></span>
+                            <button class="COF-primary-box rounded">1</button>
+                            <button class="COF-primary-box rounded">2</button>
+                            <button class="COF-primary-box rounded">3</button>
+                        </div>
+                        <input type="number" class="form-control text-center" id="coffeesQuantity" name="coffeesQuantity" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-sm" for="contributorName">Name(optional)</label>
+                        <input type="text" class="COF-input-grey form-control" id="contributorName" name="contributorName" value="" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-sm" for="contributorMessage">Message(optional)</label>
+                        <textarea class="COF-input-grey form-control" id="contributorMessage" name="contributorMessage" rows="3" placeholder="Leave us a message"></textarea>
+                    </div>
+                    <div>
+                        <button id="buyCoffee" class="btn COF-btn-primary w-100" type="submit">Buy a coffee</button>
+                    </div>
+                </form>
+            </div>
+            </a>
+        </div>
+    </section>
+    <section class="row">
+        <div class="col-7">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.message %}
+                    <div class="card shadow p-3 my-4">
+                    {% if message.message_name %}
+                        {% if message.coffees > 1 %}
+                            <p><span class="text-black">{{ message.message_name }}</span> bought {{ message.coffees }} coffees</p>
+                        {% else %}
+                            <p><span class="text-black">{{ message.message_name }}</span> bought 1 coffee</p>
+                        {% endif %}
+                    {% else %}
+                        {% if message.coffees > 1 %}
+                            <p>Someone bougth {{ message.coffees }} coffee</p>
+                        {% else %}
+                            <p>Someone bougth 1 coffee</p>
+                        {% endif %}
+                    {% endif %}
+                    <p class="COF-text-background-grey">
+                        {{ message.message }}
+                    </p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <p>There are no messages</p>
+        {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}
