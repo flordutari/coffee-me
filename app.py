@@ -58,6 +58,7 @@ conn = pymysql.connect(
 
 # Check if the file is valid
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
+COFFEE_VALUE = 3
 
 
 def allowed_file(filename):
@@ -71,10 +72,47 @@ def index():
 
 
 @app.route("/buy-coffee", methods=["POST"])
-def buyCoffee():
-    
+@login_required
+def buy_coffee():
+    # Connect db
+    db = conn.cursor()
+    # Find user
+    db.execute("SELECT * FROM `coffee-me`.users WHERE id = %s",
+               session["user"]["id"])
+    user = db.fetchone()
 
-    return render_template("thanks.html")
+    # Find project
+    project_id = request.form["projectId"]
+    db.execute("SELECT * FROM `coffee-me`.projects WHERE id = %s",
+               project_id)
+    project = db.fetchone()
+
+    coffees = float(request.form["coffeesQuantity"])
+    message = request.form["contributorMessage"]
+    message_name = request.form["contributorName"]
+
+    if user["cash"] - coffees * COFFEE_VALUE >= 0:
+        coffees_sum = project["coffees"] + coffees
+        cash_substraction = user["cash"] - coffees * COFFEE_VALUE
+
+        # Set user cash in session
+        session["user"]["cash"] = cash_substraction
+
+        # Create transaction
+        db.execute("INSERT INTO `coffee-me`.transaction(project_id, coffees, contributor, message, message_name) VALUES(%s, %s, %s, %s, %s)",
+                   (project_id, coffees, user["id"], message, message_name))
+
+        # Add coffee to project
+        db.execute("UPDATE `coffee-me`.projects SET coffees = %s WHERE id = %s",
+                   (coffees_sum, project_id))
+
+        # Substract cash to user
+        db.execute("UPDATE `coffee-me`.users SET cash = %s WHERE id = %s",
+                   (cash_substraction, user["id"]))
+    else:
+        return apology("Sorry, you don't have enough cash", 403)
+
+    return redirect(request.referrer)
 
 
 @app.route("/checkout", methods=["GET", "POST"])
@@ -129,14 +167,18 @@ def edit_project():
     if "project_id" in session:
         # Query database to update the project
         db.execute(
-            "UPDATE `coffee-me`.projectsSET title=%s, description = %s,image = %s WHERE id = %s",
+            "UPDATE `coffee-me`.projects SET title=%s, description = %s,image = %s WHERE id = %s",
             (title, description, image["url"], session["project_id"]))
     return redirect("/my-project")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # Forget any user_id
+    if "referrer" in session:
+        referrer = session["referrer"]
+    else:
+        referrer = None
+    # Forget any user
     session.clear()
 
     # User reached route via POST
@@ -154,28 +196,33 @@ def login():
         email = request.form.get("email")
         db = conn.cursor()
         db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s", (email))
-        rows = db.fetchall()
+        user = db.fetchone()
 
         # Ensure email exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"],
-                                                     request.form.get("password")):
+        if not user or not check_password_hash(user["hash"], request.form.get("password")):
             return apology("invalid email and/or password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        user = {
+            "id": user["id"],
+            "cash": user["cash"],
+        }
+        session['user'] = user
 
         db = conn.cursor()
         db.execute("SELECT * FROM `coffee-me`.projects WHERE user_id = %s",
-                   session["user_id"])
-        rows = db.fetchall()
+                   session["user"]["id"])
+        project = db.fetchone()
 
-        if len(rows) > 0:
-            session["project_id"] = rows[0]["id"]
+        if project:
+            session["project_id"] = project["id"]
 
         conn.commit()
-        # Redirect user to home page
-        return redirect("/projects")
-
+        # Redirect user to referrer if there is one
+        if referrer:
+            return redirect(referrer)
+        else:
+            return redirect("/")
     # User reached route via GET
     else:
         return render_template("login.html")
@@ -183,7 +230,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    # Forget any user_id
+    # Forget any user
     session.clear()
 
     # Redirect user to index
@@ -197,7 +244,7 @@ def my_project():
     db = conn.cursor()
 
     if request.method == "POST":
-        user_id = session["user_id"]
+        user_id = session["user"]["id"]
         title = request.form.get("title")
         description = request.form.get("description")
         if request.files:
@@ -217,14 +264,15 @@ def my_project():
         return redirect("/my-project")
     else:
         db.execute("SELECT * FROM `coffee-me`.projects WHERE user_id = %s",
-                   session["user_id"])
+                   session["user"]["id"])
         project = db.fetchone()
 
         conn.commit()
+        session["referrer"] = request.url
         return render_template("my-project.html", project=project)
 
 
-@app.route("/payment", methods=["GET"])
+@app.route("/payment")
 @login_required
 def payment():
     if request.method == "GET":
@@ -240,10 +288,12 @@ def project(id):
     project = db.fetchone()
 
     conn.commit()
+    # Save get referrer in session
+    session["referrer"] = request.url
     return render_template("project.html", project=project)
 
 
-@app.route("/projects", methods=["GET"])
+@app.route("/projects")
 def projects():
     title = request.args.get("title") or ""
     query = '%' + title + '%'
@@ -264,6 +314,10 @@ def projects():
     total = len(projects)
     pagination_projects = projects[offset: offset + per_page]
     pagination = Pagination(page=page, per_page=per_page, total=total)
+
+    # Save get referrer in session
+    session["referrer"] = request.url
+
     return render_template("projects.html",
                            projects=pagination_projects,
                            page=page,

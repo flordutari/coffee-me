@@ -16,7 +16,8 @@
             <div class="card h-100 shadow p-5">
                 <h5>Contribute with a coffee</h5>
                 <form action="/buy-coffee" method="POST" enctype="multipart/form-data">
-                    <div class="COF-grey-box d-flex form-group justify-content-between p-2 rounded">
+                        <input type="hidden" id="projectId" name="projectId" value="{{ project.id }}">
+                        <div class="COF-grey-box d-flex form-group justify-content-between p-2 rounded">
                         <div class="my-auto">
                             <span class="lnr lnr-coffee-cup COF-text-primary"></span>
                             <span class="lnr lnr-cross mx-1"></span>
