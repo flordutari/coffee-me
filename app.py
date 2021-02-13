@@ -154,16 +154,24 @@ def delete_project():
 @app.route("/edit-project", methods=["POST"])
 def edit_project():
     referrer = get_referrer()
+    new_image = ""
+    old_image = ""
 
     # Connect db
     db = conn.cursor()
 
     title = request.form.get("title")
     description = request.form.get("description")
-    if request.files and request.files["image"] != request.form.get("image"):
-        image = upload(request.files["image"])
+    image = request.files["image"]
+    if image.filename:
+        new_image = upload(request.files["image"])
     else:
-        image = request.form.get("image")
+        old_image = request.form.get("imageHidden")
+
+    if new_image:
+        image = new_image["url"]
+    elif old_image:
+        image = old_image
 
     # Ensure all data was submitted
     if not (title or description):
@@ -173,7 +181,7 @@ def edit_project():
         # Query database to update the project
         db.execute(
             "UPDATE `coffee-me`.projects SET title=%s, description = %s,image = %s WHERE id = %s",
-            (title, description, image["url"], session["project_id"]))
+            (title, description, image, session["project_id"]))
     return redirect("/my-project")
 
 
@@ -240,6 +248,47 @@ def logout():
 
     # Redirect user to index
     return redirect("/")
+
+
+@app.route("/my-profile", methods=["GET", "POST"])
+@login_required
+def my_profile():
+    referrer = get_referrer()
+
+    # Connect db
+    db = conn.cursor()
+    db.execute("SELECT * FROM `coffee-me`.users WHERE id = %s",
+               session["user"]["id"])
+    user = db.fetchone()
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        surname = request.form.get("surname")
+        email = request.form.get("email")
+        add_cash = int(request.form.get("addCash"))
+
+        if add_cash > 0:
+            cash = user["cash"] + add_cash
+            session["user"]["cash"] = cash
+        else:
+            apology("Cash must be a positive integer", 403, referrer)
+
+        # Ensure all data was submitted
+        if not (name or surname or email):
+            return apology("must provide a name and a surname", 403, referrer)
+
+        # Query database to create project
+        db.execute("UPDATE `coffee-me`.users SET name=%s, surname=%s, email=%s, cash=%s WHERE id=%s",
+                   (name, surname, email, cash, user["id"]))
+
+        conn.commit()
+
+        # Redirect user to my project
+        return redirect("/my-project")
+    else:
+        conn.commit()
+        session["referrer"] = request.url
+        return render_template("my-profile.html", user=user)
 
 
 @app.route("/my-project", methods=["GET", "POST"])
@@ -351,9 +400,9 @@ def signup():
     # User reached route via POST
     if request.method == "POST":
 
-        # Ensure name and lastname were submitted
-        if not request.form.get("name") or not request.form.get("lastname"):
-            return apology("Must provide name and lastname", 403, referrer)
+        # Ensure name and surname were submitted
+        if not request.form.get("name") or not request.form.get("surname"):
+            return apology("Must provide name and surname", 403, referrer)
 
         # Ensure user email was submitted
         if not request.form.get("email"):
