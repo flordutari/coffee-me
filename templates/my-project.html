@@ -38,6 +38,7 @@
                                     <label class="form-control custom-file-label" for="projectImage">{{ project['image'] }}</label>
                                     <input type="file" class="form-control custom-file-input" id="projectImage" name="image" value="{{ project['image'] }}">
                                 </div>
+                                <input type="hidden" id="projectImageHidden" name="imageHidden" value="{{ project['image'] }}">
                                 <div class="float-right my-4">
                                     <button class="btn COF-btn-primary" type="submit" data-toggle="modal" data-target="#editProjectModal">Edit</button>
                                     <button class="btn COF-btn-outline" data-dismiss="modal" data-toggle="modal">Cancel</span>

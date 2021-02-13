@@ -154,16 +154,24 @@ def delete_project():
 @app.route("/edit-project", methods=["POST"])
 def edit_project():
     referrer = get_referrer()
+    new_image = ""
+    old_image = ""
 
     # Connect db
     db = conn.cursor()
 
     title = request.form.get("title")
     description = request.form.get("description")
-    if request.files and request.files["image"] != request.form.get("image"):
-        image = upload(request.files["image"])
+    image = request.files["image"]
+    if image.filename:
+        new_image = upload(request.files["image"])
     else:
-        image = request.form.get("image")
+        old_image = request.form.get("imageHidden")
+
+    if new_image:
+        image = new_image["url"]
+    elif old_image:
+        image = old_image
 
     # Ensure all data was submitted
     if not (title or description):
@@ -173,7 +181,7 @@ def edit_project():
         # Query database to update the project
         db.execute(
             "UPDATE `coffee-me`.projects SET title=%s, description = %s,image = %s WHERE id = %s",
-            (title, description, image["url"], session["project_id"]))
+            (title, description, image, session["project_id"]))
     return redirect("/my-project")
 
 
