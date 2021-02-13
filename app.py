@@ -1,4 +1,5 @@
 import os
+import re
 from cloudinary.uploader import upload
 from flask import Flask, redirect, render_template, request, session, url_for
 from flask_session import Session
@@ -74,6 +75,8 @@ def index():
 @app.route("/buy-coffee", methods=["POST"])
 @login_required
 def buy_coffee():
+    referrer = get_referrer()
+
     # Connect db
     db = conn.cursor()
     # Find user
@@ -110,7 +113,7 @@ def buy_coffee():
         db.execute("UPDATE `coffee-me`.users SET cash = %s WHERE id = %s",
                    (cash_substraction, user["id"]))
     else:
-        return apology("Sorry, you don't have enough cash", 403)
+        return apology("Sorry, you don't have enough cash", 403, referrer)
 
     return redirect(request.referrer)
 
@@ -150,6 +153,8 @@ def delete_project():
 
 @app.route("/edit-project", methods=["POST"])
 def edit_project():
+    referrer = get_referrer()
+
     # Connect db
     db = conn.cursor()
 
@@ -162,7 +167,7 @@ def edit_project():
 
     # Ensure all data was submitted
     if not (title or description):
-        return apology("must provide a title and a description", 403)
+        return apology("must provide a title and a description", 403, referrer)
 
     if "project_id" in session:
         # Query database to update the project
@@ -174,10 +179,8 @@ def edit_project():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if "referrer" in session:
-        referrer = session["referrer"]
-    else:
-        referrer = None
+    referrer = get_referrer()
+
     # Forget any user
     session.clear()
 
@@ -186,11 +189,11 @@ def login():
 
         # Ensure email was submitted
         if not request.form.get("email"):
-            return apology("must provide email", 403)
+            return apology("must provide email", 403, referrer)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("must provide password", 403, referrer)
 
         # Query database for email
         email = request.form.get("email")
@@ -200,7 +203,7 @@ def login():
 
         # Ensure email exists and password is correct
         if not user or not check_password_hash(user["hash"], request.form.get("password")):
-            return apology("invalid email and/or password", 403)
+            return apology("invalid email and/or password", 403, referrer)
 
         # Remember which user has logged in
         user = {
@@ -216,6 +219,8 @@ def login():
 
         if project:
             session["project_id"] = project["id"]
+
+        session["referrer"] = request.url
 
         conn.commit()
         # Redirect user to referrer if there is one
@@ -240,6 +245,8 @@ def logout():
 @app.route("/my-project", methods=["GET", "POST"])
 @login_required
 def my_project():
+    referrer = get_referrer()
+
     # Connect db
     db = conn.cursor()
 
@@ -252,7 +259,7 @@ def my_project():
 
         # Ensure all data was submitted
         if not (title or description):
-            return apology("must provide a title and a description", 403)
+            return apology("must provide a title and a description", 403, referrer)
 
         # Query database to create project
         db.execute("INSERT INTO `coffee-me`.projects (user_id, title, description, image) VALUES (%s, %s, %s, %s)",
@@ -315,7 +322,7 @@ def projects():
 
     page, per_page, offset = get_page_args(page_parameter="page",
                                            per_page_parameter="per_page")
-    # page = request.args.get(get_page_parameter(), type=int, default=1)
+
     total = len(projects)
     pagination_projects = projects[offset: offset + per_page]
     pagination = Pagination(page=page, per_page=per_page, total=total)
@@ -340,23 +347,36 @@ def search_by_title():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+    referrer = get_referrer()
     # User reached route via POST
     if request.method == "POST":
 
         # Ensure name and lastname were submitted
         if not request.form.get("name") or not request.form.get("lastname"):
-            return apology("must provide name and lastname", 403)
+            return apology("Must provide name and lastname", 403, referrer)
 
         # Ensure user email was submitted
         if not request.form.get("email"):
-            return apology("must provide an email", 403)
+            return apology("Must provide an email", 403, referrer)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("Must provide password", 403, referrer)
 
         # Query database for email
         email = request.form.get("email")
+
+        # Check email format
+        email_match = re.match(r"\w+@\w+\.\w+", email)
+        if not email_match:
+            return apology("Email format is not correct", 403, referrer)
+
+        # Validate password
+        password = request.form.get("password")
+        password_match = re.match(r"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8, 20}$", password)
+        if not password_match:
+            return apology("Password must contain 8 digits, an uppercase letter, a lowercase letter and a number", 403, referrer)
+
         db = conn.cursor()
         db.execute("SELECT * FROM `coffee-me`.users WHERE email = %s",
                    (email))
@@ -364,9 +384,9 @@ def signup():
 
         # Ensure that email doesn't exist
         if len(rows) > 0:
-            return apology("The email provided already exists! choose another please", 403)
+            return apology("The email provided already exists! choose another please", 403, referrer)
 
-        hash = generate_password_hash(request.form.get("password"))
+        hash = generate_password_hash(password)
         # Query database to create user
         db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
                    (email, hash))
@@ -386,3 +406,11 @@ def errorhandler(e):
     if not isinstance(e, HTTPException):
         e = InternalServerError()
     return apology(e.name, e.code)
+
+
+def get_referrer():
+    if "referrer" in session:
+        referrer = session["referrer"]
+    else:
+        referrer = None
+    return referrer
