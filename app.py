@@ -404,6 +404,9 @@ def signup():
         if not request.form.get("name") or not request.form.get("surname"):
             return apology("Must provide name and surname", 403, referrer)
 
+        name = request.form.get("name")
+        surname = request.form.get("surname")
+
         # Ensure user email was submitted
         if not request.form.get("email"):
             return apology("Must provide an email", 403, referrer)
@@ -422,7 +425,7 @@ def signup():
 
         # Validate password
         password = request.form.get("password")
-        password_match = re.match(r"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8, 20}$", password)
+        password_match = re.fullmatch(r"[A-Za-z0-9@#$%^&+=]{8,}", password)
         if not password_match:
             return apology("Password must contain 8 digits, an uppercase letter, a lowercase letter and a number", 403, referrer)
 
@@ -437,8 +440,8 @@ def signup():
 
         hash = generate_password_hash(password)
         # Query database to create user
-        db.execute("INSERT INTO `coffee-me`.users (email, hash) VALUES (%s, %s)",
-                   (email, hash))
+        db.execute("INSERT INTO `coffee-me`.users (email, hash, name, surname) VALUES (%s, %s)",
+                   (email, hash, name, surname))
 
         conn.commit()
 
