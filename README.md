@@ -1,7 +1,7 @@
-# Coffee me
+# Coffee me.
 
-## Link to App
-
+## Video demo
+https://youtu.be/oYOhYqqFTrc
 ## Description
 Is a corwdfunding platform to accept support from people that likes what you do.
 Built in Flask(Python), SQL, JS, HTML, CSS
@@ -19,9 +19,11 @@ POST | /login | redirects to '/' if user logged in
 GET | /signup| redirects to '/' if user logged in. Renders '/signup'
 POST | /signup| redirects to '/' if user logged in
 POST | /logout | logout user
-GET | / | renders the homepage. if the user is not logged in, render access.
-GET | /create-project | redirects to '/create-project'
-POST | /create-project | create new project
+GET | / | renders the homepage
+GET | /projects | list all projects
+GET | /project-:id | render a specific project
+GET | /my-project | redirects to '/my-project'
+POST | /my-project | create new project
 POST | /buy-coffee | buy a coffee
 
 ## Tables
@@ -56,5 +58,4 @@ Transaction table
 ```
 
 ## Links
-Github:
-Slides:
+Github: https://github.com/flordutari/coffee-me
